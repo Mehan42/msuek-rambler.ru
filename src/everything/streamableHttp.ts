@@ -3,12 +3,21 @@ import { InMemoryEventStore } from '@modelcontextprotocol/sdk/examples/shared/in
 import express, { Request, Response } from "express";
 import { createServer } from "./everything.js";
 import { randomUUID } from 'node:crypto';
+import { addAuthEndpoints, AuthConfig } from "./auth.js";
 
 console.error('Starting Streamable HTTP server...');
 
 const app = express();
 
 const { server, cleanup } = createServer();
+
+// Configure auth
+const authConfig: AuthConfig = {
+  enabled: process.env.ENABLE_AUTH === 'true'
+};
+
+// Add auth endpoints if enabled
+addAuthEndpoints(app, authConfig);
 
 const transports: { [sessionId: string]: StreamableHTTPServerTransport } = {};
 
